@@ -14,7 +14,6 @@ class Plane:
     separations: list[int]
 
 
-@dataclass()
 class Individual:
     def __init__(self, loader):
         count = len(loader.planes)
@@ -31,7 +30,7 @@ class Individual:
 
             self.T = self.T[self.T[:, 1].argsort()]
             if(self.check_if_correct(loader)):
-                print(self.T)
+                # print(self.T)
                 break
 
     def check_if_correct(self, loader):
