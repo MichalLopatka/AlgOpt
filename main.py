@@ -1,19 +1,19 @@
-import random
-
 from loader import Loader
-from models import Individual
-from utils import fitness
+from individual import Individual
+
 
 def main():
-    loader = Loader(path="data/airland13.txt")
+    loader = Loader(path="data/airland1.txt")
     [print(x) for x in loader.planes]
     print(loader.separation_matrix)
-    random_individual = Individual
-    random_individual.greedy(random_individual, loader)
+    random_individual = Individual(loader)
+    # random_individual.greedy()
+    random_individual.greedy_modified(mode="target")
     print(random_individual.T)
-    print(fitness(random_individual.T, loader.planes))
-    print(random_individual.check_if_correct_separation(random_individual, loader))
-    print(random_individual.check_if_correct_time_frame(random_individual, loader))
+    print(random_individual.fitness())
+    print(random_individual.check_if_correct_separation())
+    print(random_individual.check_if_correct_time_frame())
+
 
 if __name__ == "__main__":
     main()
