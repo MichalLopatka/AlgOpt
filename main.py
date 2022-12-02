@@ -5,13 +5,15 @@ from models import Individual
 from utils import fitness
 
 def main():
-    loader = Loader(path="data/airland1.txt")
+    loader = Loader(path="data/airland13.txt")
     [print(x) for x in loader.planes]
     print(loader.separation_matrix)
-    random_individual = Individual(loader)
+    random_individual = Individual
+    random_individual.greedy(random_individual, loader)
     print(random_individual.T)
     print(fitness(random_individual.T, loader.planes))
-
+    print(random_individual.check_if_correct_separation(random_individual, loader))
+    print(random_individual.check_if_correct_time_frame(random_individual, loader))
 
 if __name__ == "__main__":
     main()
