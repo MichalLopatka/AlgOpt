@@ -95,17 +95,3 @@ class Individual:
             elif time < plane.target:
                 penalty += (plane.target - time) * plane.penalty_early
         return penalty
-
-    def repair(self, T, rows):
-        for x in range(rows - 1):
-            i = int(T[x][0])
-            j = int(T[x + 1][0])
-            # assume target time as result
-            a = T[x][1]
-            b = T[x + 1][1]
-            # if separation is too small, add separation
-            while b - a < self.separation_matrix[i][j]:
-                b += 1
-            T[x][1] = a
-            T[x + 1][1] = b
-        return T
