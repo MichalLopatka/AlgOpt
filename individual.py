@@ -23,7 +23,7 @@ class Individual:
         self.T = self.T[self.T[:, 1].argsort()]
 
     def greedy(self):
-        # sort planes by appearance time
+        # sort planes by target time
         for x in range(self.rows):
             self.T[x][0] = x
             self.T[x][1] = self.planes[x].target
@@ -35,6 +35,28 @@ class Individual:
             # assume target time as result
             a = self.T[x][1]
             b = self.T[x + 1][1]
+            # if separation is too small, add separation
+            while b - a < self.separation_matrix[i][j]:
+                b += 1
+            self.T[x][1] = a
+            self.T[x + 1][1] = b
+
+    def greedy_randomized(self):
+        # sort planes by earliest time
+        for x in range(self.rows):
+            self.T[x][0] = x
+            self.T[x][1] = self.planes[x].earliest
+        self.T = self.T[self.T[:, 1].argsort()]
+        # draw first one
+        i = int(self.T[0][0])
+        self.T[0][1] = random.randrange(self.planes[i].earliest, self.planes[i].target + (self.planes[i].target - self.planes[i].earliest))
+        # get number from [earliest, target + (rarget-earliest)
+        for x in range(self.rows - 1):
+            i = int(self.T[x][0])
+            j = int(self.T[x + 1][0])
+            # assume target time as result
+            a = self.T[x][1]
+            b = random.randrange(self.planes[j].earliest, self.planes[j].target + (self.planes[j].target - self.planes[j].earliest))
             # if separation is too small, add separation
             while b - a < self.separation_matrix[i][j]:
                 b += 1
@@ -82,7 +104,6 @@ class Individual:
             b = self.separation_matrix[i][j]
             if a - b < 0:
                 return False
-
         return True
 
     def fitness(self):
