@@ -4,12 +4,13 @@ from evolve import Evolve
 
 
 def run_greedy():
-    loader = Loader(path="data/airland5.txt")
+    loader = Loader(path="data/airland1.txt")
     [print(x) for x in loader.planes]
     print(loader.separation_matrix)
     random_individual = Individual(loader)
     # random_individual.greedy()
-    random_individual.greedy_modified(mode="target")
+    # random_individual.greedy_modified(mode="target")
+    random_individual.greedy_randomized()
     print(random_individual.T)
     print(random_individual.fitness())
     print(random_individual.check_if_correct_separation())
@@ -17,7 +18,7 @@ def run_greedy():
 
 
 def run_ev():
-    loader = Loader(path="data/airland5.txt")
+    loader = Loader(path="data/airland1.txt")
     [print(x) for x in loader.planes]
     print(loader.separation_matrix)
     ev = Evolve(loader)
@@ -25,7 +26,7 @@ def run_ev():
 
 
 def main():
-    run_ev()
+    #run_ev()
     run_greedy()
 
 
