@@ -4,7 +4,7 @@ import numpy.random as npr
 
 
 class Evolve:
-    def __init__(self, loader, population_size: int = 200):
+    def __init__(self, loader, population_size: int = 150):
         self.planes = loader.planes
         self.length = len(self.planes)
         self.separation_matrix = loader.separation_matrix
@@ -12,7 +12,7 @@ class Evolve:
         self.population = self.create_population()
 
     def alg_loop(
-        self, iterations: int = 10, tour_size: int = 20, px: float = 0.9, pm: float = 0.2
+        self, iterations: int = 50, tour_size: int = 5, px: float = 0.9, pm: float = 0.2
     ) -> tuple[int, list[int]]:
         t = 0
         population = self.population
@@ -47,7 +47,7 @@ class Evolve:
     def create_population(self) -> list[int]:
         population = []
         for i in range(self.population_size):
-            begin = self.random_start(self.length)
+            begin = self.semi_random_start()
             population.append(begin)
         return population
 
@@ -55,6 +55,24 @@ class Evolve:
         begin = list(range(0, len))
         random.shuffle(begin)
         return begin
+
+    def semi_random_start(self):
+        count = len(self.planes)
+        T = np.zeros((count, 2))
+        rows, _ = T.shape
+        for x in range(rows):
+            T[x][0] = x
+            T[x][1] = random.randrange(
+                self.planes[x].earliest,
+                self.planes[x].target
+                + (self.planes[x].target - self.planes[x].earliest),
+            )
+        T = T[T[:, 1].argsort()]
+
+        T = list(T[:, 0])
+        T = [int(el) for el in T]
+        # print(T)
+        return list(T)
 
     def repair(self, T, rows):
         max_time = max(plane.latest for plane in self.planes)
@@ -84,17 +102,16 @@ class Evolve:
             plane = self.planes[int(id)]
 
             if time > plane.latest:
-                penalty += 10000000
-                return penalty
+                penalty += 100000 * (time - plane.latest)
+
             if time < plane.earliest:
-                penalty += 10000000
-                return penalty
+                penalty += 100000 * (plane.earliest - time)
 
             if time > plane.target:
                 penalty += (time - plane.target) * plane.penalty_late
             elif time < plane.target:
                 penalty += (plane.target - time) * plane.penalty_early
-    
+
         return penalty
 
     def swap(self, order: list[int]):

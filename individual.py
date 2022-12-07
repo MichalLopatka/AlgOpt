@@ -49,15 +49,45 @@ class Individual:
         self.T = self.T[self.T[:, 1].argsort()]
         # draw first one
         i = int(self.T[0][0])
-        self.T[0][1] = random.randrange(self.planes[i].earliest, self.planes[i].target + (self.planes[i].target - self.planes[i].earliest))
+        self.T[0][1] = random.randrange(
+            self.planes[i].earliest,
+            self.planes[i].target + (self.planes[i].target - self.planes[i].earliest),
+        )
         # get number from [earliest, target + (rarget-earliest)
         for x in range(self.rows - 1):
             i = int(self.T[x][0])
             j = int(self.T[x + 1][0])
             # assume target time as result
             a = self.T[x][1]
-            b = random.randrange(self.planes[j].earliest, self.planes[j].target + (self.planes[j].target - self.planes[j].earliest))
+            b = random.randrange(
+                self.planes[j].earliest,
+                self.planes[j].target
+                + (self.planes[j].target - self.planes[j].earliest),
+            )
             # if separation is too small, add separation
+            while b - a < self.separation_matrix[i][j]:
+                b += 1
+            self.T[x][1] = a
+            self.T[x + 1][1] = b
+
+    def greedy_randomized2(self):
+        for x in range(self.rows):
+            self.T[x][0] = x
+            self.T[x][1] = random.randrange(
+                self.planes[x].earliest,
+                self.planes[x].target
+                + (self.planes[x].target - self.planes[x].earliest),
+            )
+        self.T = self.T[self.T[:, 1].argsort()]
+        for x in range(self.rows - 1):
+            i = int(self.T[x][0])
+            j = int(self.T[x + 1][0])
+            a = self.T[x][1]
+            b = random.randrange(
+                self.planes[j].earliest,
+                self.planes[j].target
+                + (self.planes[j].target - self.planes[j].earliest),
+            )
             while b - a < self.separation_matrix[i][j]:
                 b += 1
             self.T[x][1] = a
