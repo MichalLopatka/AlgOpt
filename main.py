@@ -1,10 +1,11 @@
 from loader import Loader
 from individual import Individual
 from evolve import Evolve
+from ants import Ants
 
 
 def run_greedy():
-    loader = Loader(path="data/airland5.txt")
+    loader = Loader(path="data/airland1.txt")
     # [print(x) for x in loader.planes]
     # print(loader.separation_matrix)
     random_individual = Individual(loader)
@@ -19,16 +20,25 @@ def run_greedy():
 
 
 def run_ev():
-    loader = Loader(path="data/airland5.txt")
+    loader = Loader(path="data/airland1.txt")
     # [print(x) for x in loader.planes]
     # print(loader.separation_matrix)
     ev = Evolve(loader)
     ev.alg_loop()
 
 
+def run_ants():
+    loader = Loader(path="data/airland1.txt")
+    # [print(x) for x in loader.planes]
+    # print(loader.separation_matrix)
+    ev = Ants(loader)
+    ev.loop()
+
+
 def main():
-    run_ev()
-    run_greedy()
+    # run_ev()
+    # run_greedy()
+    run_ants()
 
 
 if __name__ == "__main__":

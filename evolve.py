@@ -4,7 +4,7 @@ import numpy.random as npr
 
 
 class Evolve:
-    def __init__(self, loader, population_size: int = 150):
+    def __init__(self, loader, population_size: int = 50):
         self.planes = loader.planes
         self.length = len(self.planes)
         self.separation_matrix = loader.separation_matrix
@@ -12,7 +12,7 @@ class Evolve:
         self.population = self.create_population()
 
     def alg_loop(
-        self, iterations: int = 50, tour_size: int = 5, px: float = 0.9, pm: float = 0.2
+        self, iterations: int = 20, tour_size: int = 5, px: float = 0.9, pm: float = 0.3
     ) -> tuple[int, list[int]]:
         t = 0
         population = self.population
