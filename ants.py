@@ -4,7 +4,7 @@ import numpy.random as npr
 
 
 class Ants:
-    def __init__(self, loader, a=1, b1=2, b2=4, Q=10000, p=0.7, ants=1000, iters=10):
+    def __init__(self, loader, a=1, b1=2, b2=4, Q=5000, p=0.9, ants=1000, iters=10):
         self.planes = loader.planes
         self.length = len(self.planes)
         self.separation_matrix = loader.separation_matrix
@@ -18,6 +18,8 @@ class Ants:
         self.iters = iters
 
     def loop(self):
+        global_best = np.inf
+        global_route = None
         for _ in range(self.iters):
             best_route = None
             best_cost = np.inf
@@ -33,7 +35,12 @@ class Ants:
                     best_cost = fitness
                     best_route = route
             self.update_pheromones(best_route, best_cost)
-            print(best_cost, best_route)
+            # print(best_cost, best_route)
+            if best_cost < global_best:
+                global_best = best_cost
+                global_route = best_route
+            print(global_best, global_route)
+
 
     def generate_candidate_list(self):
         begin = list(range(0, self.length))
@@ -43,6 +50,14 @@ class Ants:
     def probability(self, pheromone, priority, penalty):
         prob = (
             float(pheromone) ** self.a * (1 / (priority + 1)) ** self.b1
+            + (1 / (penalty + 1)) ** self.b2
+        )
+
+        return prob
+
+    def probability2(self, priority, penalty):
+        prob = (
+            (1 / (priority + 1)) ** self.b1
             + (1 / (penalty + 1)) ** self.b2
         )
 
@@ -76,6 +91,16 @@ class Ants:
                 np.random.choice(candidates, p=probabilities, replace=False, size=1)
             )
         except (IndexError, TypeError):
+            priorities = self.assess_priority(candidates)
+            probs = [
+                self.probability2(
+                    priorities.index(x),
+                    self.count_penalty(route, x),
+                )
+                for x in candidates
+            ]
+            probs_sum = sum(probs)
+            probabilities = [x / probs_sum for x in probs]
             chosen = int(np.random.choice(candidates, replace=False, size=1))
         return chosen
 
@@ -89,9 +114,11 @@ class Ants:
 
     def count_penalty(self, route, new):
         route = np.append(route, new)
+        route = [int(x) for x in route]
         T = np.zeros((len(route), 2))
         rows, _ = T.shape
         for i, el in enumerate(route):
+            # print(el)
             T[i, 0] = el
             T[i, 1] = self.planes[el].target
         T = self.repair(T, rows)
