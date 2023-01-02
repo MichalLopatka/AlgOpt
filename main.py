@@ -5,7 +5,7 @@ from ants import Ants
 
 
 def run_greedy():
-    loader = Loader(path="data/airland1.txt")
+    loader = Loader(path="data/airland5.txt")
     # [print(x) for x in loader.planes]
     # print(loader.separation_matrix)
     random_individual = Individual(loader)
@@ -20,7 +20,7 @@ def run_greedy():
 
 
 def run_ev():
-    loader = Loader(path="data/airland1.txt")
+    loader = Loader(path="data/airland5.txt")
     # [print(x) for x in loader.planes]
     # print(loader.separation_matrix)
     ev = Evolve(loader)
@@ -28,7 +28,7 @@ def run_ev():
 
 
 def run_ants():
-    loader = Loader(path="data/airland1.txt")
+    loader = Loader(path="data/airland5.txt")
     # [print(x) for x in loader.planes]
     # print(loader.separation_matrix)
     ev = Ants(loader)

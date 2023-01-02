@@ -4,7 +4,7 @@ import numpy.random as npr
 
 
 class Ants:
-    def __init__(self, loader, a=1, b1=2, b2=4, Q=5000, p=0.9, ants=1000, iters=10):
+    def __init__(self, loader, a=1, b1=2, b2=4, Q=2, p=2, ants=200, iters=20, pheromone_ants=10):
         self.planes = loader.planes
         self.length = len(self.planes)
         self.separation_matrix = loader.separation_matrix
@@ -16,6 +16,7 @@ class Ants:
         self.p = p
         self.ants = ants
         self.iters = iters
+        self.pheromone_ants = pheromone_ants
 
     def loop(self):
         global_best = np.inf
@@ -23,6 +24,7 @@ class Ants:
         for _ in range(self.iters):
             best_route = None
             best_cost = np.inf
+            best_n = np.empty((0,len(self.planes) +1), int)
             for _ in range(self.ants):
                 candidates = self.generate_candidate_list()
                 route = []
@@ -34,7 +36,13 @@ class Ants:
                 if fitness < best_cost:
                     best_cost = fitness
                     best_route = route
-            self.update_pheromones(best_route, best_cost)
+                actual = np.concatenate((fitness, route), axis=None)
+                best_n = np.vstack([best_n, actual])
+                best_n = best_n[best_n[:, 0].argsort()]
+            #print(best_n[:, 0])
+            #self.update_pheromones(best_route, best_cost)
+            for x in range(self.pheromone_ants):
+                self.update_pheromones(best_n[x][1:].astype(int), best_n[x][0].astype(int))
             # print(best_cost, best_route)
             if best_cost < global_best:
                 global_best = best_cost
