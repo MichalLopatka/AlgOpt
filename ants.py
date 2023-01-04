@@ -4,7 +4,7 @@ import numpy.random as npr
 
 
 class Ants:
-    def __init__(self, loader, a=1, b1=2, b2=4, Q=2, p=2, ants=200, iters=20, pheromone_ants=10):
+    def __init__(self, loader, a=1, b1=2, b2=4, Q=2, p=2, ants=200, iters=30, pheromone_ants=10):
         self.planes = loader.planes
         self.length = len(self.planes)
         self.separation_matrix = loader.separation_matrix
@@ -26,7 +26,7 @@ class Ants:
             best_cost = np.inf
             best_n = np.empty((0,len(self.planes) +1), int)
             for _ in range(self.ants):
-                candidates = self.generate_candidate_list()
+                candidates = self.generate_candidate_list_semi_random()
                 route = []
                 while candidates:
                     chosen = self.select_plane(candidates, route)
@@ -54,6 +54,27 @@ class Ants:
         begin = list(range(0, self.length))
         random.shuffle(begin)
         return begin
+
+    def generate_candidate_list_semi_random(self):
+        count = len(self.planes)
+        T = np.zeros((count, 2))
+        rows, _ = T.shape
+        for x in range(rows):
+            T[x][0] = x
+            if(self.planes[x].target - self.planes[x].earliest == 0):
+                T[x][1] = self.planes[x].earliest
+            else:
+                T[x][1] = random.randrange(
+                    self.planes[x].earliest,
+                    self.planes[x].target
+                    + (self.planes[x].target - self.planes[x].earliest),
+                )
+        T = T[T[:, 1].argsort()]
+
+        T = list(T[:, 0])
+        T = [int(el) for el in T]
+        # print(T)
+        return list(T)
 
     def probability(self, pheromone, priority, penalty):
         prob = (
