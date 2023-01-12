@@ -4,7 +4,7 @@ import numpy.random as npr
 
 
 class Ants:
-    def __init__(self, loader, a=1, b1=2, b2=4, Q=2, p=2, ants=200, iters=30, pheromone_ants=10):
+    def __init__(self, loader, a=1, b1=2, b2=4, Q=5, p=2, ants=200, iters=30, pheromone_ants=10):
         self.planes = loader.planes
         self.length = len(self.planes)
         self.separation_matrix = loader.separation_matrix
@@ -29,7 +29,10 @@ class Ants:
                 candidates = self.generate_candidate_list_semi_random()
                 route = []
                 while candidates:
-                    chosen = self.select_plane(candidates, route)
+                    if((0 in candidates) and self.planes[0].earliest == self.planes[0].latest):
+                        chosen = 0
+                    else:
+                        chosen = self.select_plane(candidates, route)
                     candidates.remove(chosen)
                     route.append(chosen)
                 fitness = self.fitness(route)
@@ -61,8 +64,13 @@ class Ants:
         rows, _ = T.shape
         for x in range(rows):
             T[x][0] = x
-            if(self.planes[x].target - self.planes[x].earliest == 0):
+            if(self.planes[x].latest - self.planes[x].earliest == 0):
                 T[x][1] = self.planes[x].earliest
+            elif(self.planes[x].target - self.planes[x].earliest ==0):
+                T[x][1] = random.randrange(
+                    self.planes[x].earliest,
+                    self.planes[x].latest
+                )
             else:
                 T[x][1] = random.randrange(
                     self.planes[x].earliest,
