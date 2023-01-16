@@ -16,7 +16,8 @@ class Evolve:
     ) -> tuple[int, list[int]]:
         t = 0
         population = self.population
-
+        best = None
+        best_fitness = 1000000
         while t < iterations:
             new_population = []
             while len(new_population) < self.population_size:
@@ -38,10 +39,12 @@ class Evolve:
             t += 1
             population = new_population
             best = self.tournament(new_population, len(new_population))
+            fitness = self.fitness(best)
+            if fitness < best_fitness:
+                best_fitness = fitness
             print(best)
-            print(self.fitness(best))
+            print(best_fitness)
 
-        best = self.tournament(new_population, len(new_population))
         return self.fitness(best), best
 
     def create_population(self) -> list[int]:
@@ -97,7 +100,7 @@ class Evolve:
         rows, _ = T.shape
         for i, el in enumerate(route):
             T[i, 0] = el
-            T[i, 1] = self.planes[el].target
+            T[i, 1] = random.randrange(self.planes[el].earliest, self.planes[el].target)
         T = self.repair(T, rows)
         penalty = 0
         for position in T:
