@@ -20,7 +20,7 @@ def run_greedy():
 
 
 def run_ev():
-    loader = Loader(path="data/airland7.txt")
+    loader = Loader(path="data/airland8.txt")
     # [print(x) for x in loader.planes]
     # print(loader.separation_matrix)
     ev = Evolve(loader)
@@ -37,8 +37,8 @@ def run_ants():
 
 
 def main():
-    # run_ev()
-    run_greedy()
+    run_ev()
+    # run_greedy()
     # run_ants()
 
 
